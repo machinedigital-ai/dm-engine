@@ -1,0 +1,8 @@
+.venv/
+.env
+*.db
+*.db-wal
+*.db-shm
+__pycache__/
+poll.log
+.DS_Store

@@ -1,0 +1,522 @@
+<title>Instagram DM Engine Onboarding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Public+Sans:wght@400;500;600&family=Sora:wght@600;700&display=swap">
+
+<style>
+:root{
+  --paper:#F3F3F0;
+  --card:#FFFFFF;
+  --sunk:#EAEAE5;
+  --ink:#17171A;
+  --ink-soft:#585862;
+  --ink-faint:#8B8B94;
+  --line:#DCDCD5;
+  --rule:#C6C6BE;
+  --go:#0B5C4E;
+  --go-bg:#E1EFEA;
+  --stop:#A93A1C;
+  --stop-bg:#F7E6DF;
+  --warn:#8A6100;
+  --warn-bg:#F7EDD6;
+  --code-bg:#1C1C20;
+  --code-fg:#EDEDE8;
+
+  --display:Sora,"Helvetica Neue",Arial,sans-serif;
+  --body:"Public Sans","Helvetica Neue",Arial,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --shell:940px;
+  --rail:56px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F0F12;
+    --card:#17171C;
+    --sunk:#1D1D23;
+    --ink:#EDEDE8;
+    --ink-soft:#A0A0AC;
+    --ink-faint:#6E6E7A;
+    --line:#2A2A33;
+    --rule:#3A3A45;
+    --go:#54C7A8;
+    --go-bg:#10271F;
+    --stop:#F0876A;
+    --stop-bg:#2C1712;
+    --warn:#DCA83E;
+    --warn-bg:#2A2113;
+    --code-bg:#08080A;
+    --code-fg:#EDEDE8;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F0F12; --card:#17171C; --sunk:#1D1D23;
+  --ink:#EDEDE8; --ink-soft:#A0A0AC; --ink-faint:#6E6E7A;
+  --line:#2A2A33; --rule:#3A3A45;
+  --go:#54C7A8; --go-bg:#10271F;
+  --stop:#F0876A; --stop-bg:#2C1712;
+  --warn:#DCA83E; --warn-bg:#2A2113;
+  --code-bg:#08080A; --code-fg:#EDEDE8;
+}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6}
+.shell{max-width:var(--shell);margin-inline:auto;padding-inline:clamp(16px,4vw,32px)}
+h1,h2,h3{font-family:var(--display);font-weight:700;letter-spacing:-.025em;line-height:1.12;margin:0;text-wrap:balance}
+p{margin:0}
+a{color:var(--go)}
+:focus-visible{outline:2px solid var(--go);outline-offset:3px}
+code{font-family:var(--mono);font-size:.86em;background:var(--sunk);padding:2px 6px;border-radius:3px;word-break:break-word}
+b,strong{font-weight:600}
+
+/* masthead */
+.mast{background:var(--card);border-bottom:1px solid var(--line)}
+.mast__in{padding-block:clamp(32px,5vw,52px) 28px}
+.kick{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:14px}
+.mast h1{font-size:clamp(28px,4.6vw,44px);margin-bottom:14px}
+.mast p{color:var(--ink-soft);max-width:62ch}
+.facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.fact{font-family:var(--mono);font-size:11.5px;background:var(--sunk);border:1px solid var(--line);padding:6px 11px;border-radius:3px;color:var(--ink-soft)}
+.fact b{color:var(--ink)}
+
+/* intro blocks */
+.block{padding-block:clamp(26px,4vw,40px);border-bottom:1px solid var(--line)}
+.block h2{font-size:clamp(20px,2.6vw,27px);margin-bottom:14px}
+.block p+p{margin-top:12px}
+.block p{color:var(--ink-soft)}
+
+/* route cards */
+.routes{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+.route{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:20px}
+.route--pick{border-color:var(--go);box-shadow:0 0 0 1px var(--go)}
+.route h3{font-size:17px;margin-bottom:6px;display:flex;align-items:center;gap:9px}
+.route p{font-size:14.5px;color:var(--ink-soft)}
+.route dl{margin:14px 0 0;display:grid;grid-template-columns:auto 1fr;gap:5px 12px;font-size:13.5px}
+.route dt{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);white-space:nowrap}
+.route dd{margin:0;color:var(--ink-soft)}
+.badge{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:3px;background:var(--go-bg);color:var(--go);font-weight:500}
+
+/* the spine */
+.stage{position:relative;padding-left:var(--rail);padding-block:30px;border-bottom:1px solid var(--line)}
+.stage::before{
+  content:"";position:absolute;left:17px;top:64px;bottom:0;width:2px;background:var(--line)
+}
+.stage:last-of-type::before{display:none}
+.n{
+  position:absolute;left:0;top:26px;width:36px;height:36px;border-radius:50%;
+  display:grid;place-items:center;background:var(--ink);color:var(--paper);
+  font-family:var(--mono);font-size:14px;font-weight:700
+}
+.stage--opt .n{background:var(--sunk);color:var(--ink-soft);border:1px solid var(--rule)}
+.stage__head{display:flex;flex-wrap:wrap;align-items:baseline;gap:12px;margin-bottom:6px}
+.stage h2{font-size:clamp(19px,2.4vw,25px)}
+.mins{font-family:var(--mono);font-size:11px;color:var(--ink-faint);white-space:nowrap}
+.stage__lede{color:var(--ink-soft);margin-bottom:18px;max-width:64ch}
+
+ol.steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:13px}
+ol.steps>li{padding-left:4px}
+ol.steps>li::marker{font-family:var(--mono);font-size:13px;color:var(--ink-faint)}
+.saw{display:block;color:var(--ink-soft);font-size:14.5px;margin-top:4px}
+.saw::before{content:"You'll see: ";font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint)}
+
+/* code */
+pre{
+  margin:14px 0 0;background:var(--code-bg);color:var(--code-fg);
+  border-radius:6px;padding:14px 16px;overflow-x:auto;
+  font-family:var(--mono);font-size:13px;line-height:1.65
+}
+pre code{background:none;padding:0;font-size:inherit;color:inherit}
+.cmt{color:#8A8A95}
+.lit{color:#7FD1B9}
+
+/* checkpoint */
+.cp{
+  margin-top:20px;background:var(--go-bg);border:1px solid color-mix(in srgb,var(--go) 35%,transparent);
+  border-radius:6px;padding:16px 18px
+}
+.cp__t{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--go);font-weight:700;margin-bottom:9px}
+.cp p{font-size:15px}
+.cp pre{margin-top:10px}
+.cp__fail{margin-top:12px;padding-top:11px;border-top:1px solid color-mix(in srgb,var(--go) 25%,transparent);font-size:14.5px;color:var(--ink-soft)}
+.cp__fail b{color:var(--ink)}
+
+/* notes */
+.note{margin-top:16px;border-radius:6px;padding:14px 16px;font-size:15px;border:1px solid}
+.note--stop{background:var(--stop-bg);border-color:color-mix(in srgb,var(--stop) 35%,transparent)}
+.note--warn{background:var(--warn-bg);border-color:color-mix(in srgb,var(--warn) 35%,transparent)}
+.note__t{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;margin-bottom:7px}
+.note--stop .note__t{color:var(--stop)}
+.note--warn .note__t{color:var(--warn)}
+
+/* tables */
+.wrap{overflow-x:auto;margin-top:18px;border:1px solid var(--line);border-radius:6px;background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:14px}
+th,td{text-align:left;padding:10px 13px;border-bottom:1px solid var(--line);vertical-align:top}
+thead th{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);font-weight:500;border-bottom:1.5px solid var(--rule)}
+tbody tr:last-child td{border-bottom:0}
+td.mono{font-family:var(--mono);font-size:12.5px}
+
+footer{padding-block:32px 44px;color:var(--ink-faint);font-family:var(--mono);font-size:11.5px;line-height:1.7}
+
+@media(max-width:680px){
+  .routes{grid-template-columns:1fr}
+  :root{--rail:42px}
+  .n{width:30px;height:30px;font-size:12.5px}
+  .stage::before{left:14px}
+}
+</style>
+
+<header class="mast">
+  <div class="shell mast__in">
+    <p class="kick">Onboarding &middot; dm-engine</p>
+    <h1>Get your Instagram replying by itself</h1>
+    <p>Start to finish, on your own account. Every stage ends with a test, so you always know whether to keep going or stop and fix something. No prior Meta developer experience assumed.</p>
+    <div class="facts">
+      <span class="fact"><b>~35 min</b> total</span>
+      <span class="fact"><b>9</b> stages</span>
+      <span class="fact"><b>No</b> App Review</span>
+      <span class="fact"><b>No</b> company documents</span>
+      <span class="fact"><b>$0</b></span>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+
+<section class="block">
+  <h2>What you're building</h2>
+  <p>Someone comments <b>GUIDE</b> on your post. They instantly get a DM with your link and a question: want it by email too? They reply with their address. You have a lead. You were asleep.</p>
+  <p>That's the whole thing. It's the feature people actually pay ManyChat for.</p>
+</section>
+
+<section class="block">
+  <h2>One decision, already made for you</h2>
+  <p>There are two ways to find out that someone commented. This matters because one of them may be blocked for you and the other can't be.</p>
+
+  <div class="routes">
+    <div class="route route--pick">
+      <h3>Polling <span class="badge">We start here</span></h3>
+      <p>Your machine asks Instagram &ldquo;any new comments?&rdquo; once a minute.</p>
+      <dl>
+        <dt>Delay</dt><dd>Up to 60 seconds</dd>
+        <dt>Needs</dt><dd>Nothing beyond a token</dd>
+        <dt>Risk</dt><dd>None &mdash; can't be gated</dd>
+      </dl>
+    </div>
+    <div class="route">
+      <h3>Webhooks</h3>
+      <p>Instagram pushes the comment to you the instant it happens.</p>
+      <dl>
+        <dt>Delay</dt><dd>Instant</dd>
+        <dt>Needs</dt><dd>Public HTTPS + app set to Live</dd>
+        <dt>Risk</dt><dd>Meta documents <code>comments</code> as needing Advanced Access</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="note note--warn">
+    <p class="note__t">Why not webhooks first</p>
+    <p>Meta's webhooks page says Advanced Access is required to receive <code>comments</code> notifications &mdash; and Advanced Access needs Business Verification, which wants company registration documents. Their App Review page separately says an app serving only an account you own needs no review at all. Those two statements are in tension, and people report it working both ways.</p>
+    <p style="margin-top:10px">Polling sidesteps the argument entirely. A private reply is allowed up to <b>7 days</b> after a comment, so checking once a minute loses you nothing. Stage 9 adds webhooks as an upgrade if they turn out to work for you.</p>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Before you start</h2>
+  <div class="wrap">
+    <table>
+      <thead><tr><th>You need</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>An Instagram account you control</td><td>The one that'll do the replying</td></tr>
+        <tr><td>A Facebook account</td><td>The only way into the developer site. You'll never use Facebook itself</td></tr>
+        <tr><td>A phone that receives SMS</td><td>Developer registration sends a code</td></tr>
+        <tr><td>A second Instagram account, or a friend</td><td>To comment on your post in Stage 8. You can't test this on yourself</td></tr>
+        <tr><td>A terminal</td><td>Already open &mdash; that's where you're reading this from</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ STAGES ============ -->
+
+<section class="stage">
+  <span class="n">1</span>
+  <div class="stage__head"><h2>Prepare the Instagram account</h2><span class="mins">5 min &middot; phone</span></div>
+  <p class="stage__lede">All in the Instagram mobile app. Three settings, and one of them silently breaks everything if you skip it.</p>
+  <ol class="steps">
+    <li>Open Instagram, tap your profile picture (bottom right), then the three lines <b>&#9776;</b> at the top right.
+      <span class="saw">A panel titled <b>Settings and activity</b>.</span></li>
+    <li>Scroll to <b>For professionals</b> &rarr; <b>Account type and tools</b> &rarr; <b>Switch to professional account</b>. Pick any category, then choose <b>Business</b> or <b>Creator</b> &mdash; either works.
+      <span class="saw">If it says <b>Switch to personal account</b> instead, you're already professional. Move on.</span></li>
+    <li>When it offers to connect a Facebook Page, tap <b>Skip</b>. You genuinely don't need one.</li>
+    <li>Make the account <b>public</b>: Settings &rarr; <b>Account privacy</b> &rarr; make sure <b>Private account</b> is off.</li>
+    <li>Turn on message access: <b>&#9776;</b> &rarr; <b>Messages and story replies</b> &rarr; <b>Message requests</b> &rarr; scroll to <b>Connected tools</b> &rarr; switch <b>Allow access to messages</b> on.
+      <span class="saw">If you can't find <b>Connected tools</b>, carry on &mdash; it isn't confirmed as required on this path, but it's free and it's the most common cause of silent failures.</span></li>
+  </ol>
+  <div class="cp">
+    <p class="cp__t">Checkpoint 1</p>
+    <p>Open a private browser window and visit <code>instagram.com/your-username</code>. You should see your posts <b>without logging in</b>.</p>
+    <p class="cp__fail"><b>If you can't see them:</b> the account is still private. Meta will not report comments on private accounts, and nothing downstream will ever fire. Fix this before continuing.</p>
+  </div>
+</section>
+
+<section class="stage">
+  <span class="n">2</span>
+  <div class="stage__head"><h2>Become a Meta developer</h2><span class="mins">5 min &middot; desktop</span></div>
+  <p class="stage__lede">Free, instant, and not a commitment to anything. You just need an account that can create apps.</p>
+  <ol class="steps">
+    <li>Log into <b>facebook.com</b> in a desktop browser.</li>
+    <li>Turn on two-factor auth on that Facebook account: <b>Settings &amp; privacy</b> &rarr; <b>Settings</b> &rarr; <b>Accounts Center</b> &rarr; <b>Password and security</b> &rarr; <b>Two-factor authentication</b>.
+      <span class="saw">Do it now. Meta blocks several later operations without it, and retrofitting mid-setup is worse.</span></li>
+    <li>Go to <b>developers.facebook.com</b> and click <b>Get Started</b> (top right).</li>
+    <li>Accept the Platform Terms and Developer Policies, then verify your phone by SMS and confirm the emailed code.
+      <span class="saw">No credit card is ever requested. If something asks for payment, you're on the wrong page.</span></li>
+  </ol>
+  <div class="cp">
+    <p class="cp__t">Checkpoint 2</p>
+    <p>Load <code>developers.facebook.com/apps</code>. You should land on an app list (probably empty) with a <b>Create app</b> button &mdash; not a login wall.</p>
+  </div>
+</section>
+
+<section class="stage">
+  <span class="n">3</span>
+  <div class="stage__head"><h2>Create the app</h2><span class="mins">5 min</span></div>
+  <p class="stage__lede">Meta reorganised this screen. Older guides tell you to pick an <em>app type</em> called &ldquo;Business&rdquo; &mdash; that screen no longer exists. You pick a <em>use case</em> instead.</p>
+  <ol class="steps">
+    <li>Click <b>Create app</b>.</li>
+    <li><b>App details</b>: enter any <b>App name</b> (it's only visible to you) and your <b>App contact email</b>. Click <b>Next</b>.</li>
+    <li><b>Use cases</b>: select the Instagram messaging use case. Click <b>Next</b>.
+      <span class="saw">A list of use cases with incompatible ones greyed out. Not a list of app types.</span></li>
+    <li><b>Business</b>: choose <b>I don't want to connect a business portfolio yet</b>. It's optional and you don't need one.</li>
+    <li>Work through <b>Requirements</b>, then finish on <b>Overview</b>.</li>
+  </ol>
+  <div class="cp">
+    <p class="cp__t">Checkpoint 3</p>
+    <p>Your app appears in the dashboard with a left sidebar. You can see <b>Instagram</b> in that sidebar.</p>
+    <p class="cp__fail"><b>No Instagram in the sidebar:</b> the use case didn't attach. Look for <b>Add product</b> or <b>Products</b> in the sidebar and add <b>Instagram</b> manually.</p>
+  </div>
+</section>
+
+<section class="stage">
+  <span class="n">4</span>
+  <div class="stage__head"><h2>Set permissions &mdash; before the token</h2><span class="mins">3 min</span></div>
+  <p class="stage__lede">Order matters here. A token only carries the permissions that were set when it was generated. Get this backwards and you'll generate a token, wire everything up, and discover at the last step that it can't do anything.</p>
+  <ol class="steps">
+    <li>Left sidebar &rarr; <b>Instagram</b> &rarr; <b>API setup with Instagram business login</b>.</li>
+    <li>Find <b>Business login settings</b> and confirm these three permissions are present:
+      <pre><code>instagram_business_basic
+instagram_business_manage_comments
+instagram_business_manage_messages</code></pre>
+    </li>
+    <li>Save if you changed anything.</li>
+  </ol>
+  <div class="note note--warn">
+    <p class="note__t">Do not skip ahead</p>
+    <p>If you already generated a token before setting these, generate a fresh one after saving. The old one keeps the old, narrower permissions.</p>
+  </div>
+</section>
+
+<section class="stage">
+  <span class="n">5</span>
+  <div class="stage__head"><h2>Generate your token</h2><span class="mins">3 min</span></div>
+  <ol class="steps">
+    <li>Still in <b>API setup with Instagram business login</b>, section <b>1. Generate access tokens</b>, click <b>Add account</b>.
+      <span class="saw">An Instagram login popup. Log in with the Instagram account from Stage 1 &mdash; not your Facebook credentials.</span></li>
+    <li>Click <b>Generate token</b> on that account's row. <b>Copy it immediately</b> &mdash; it is shown once.</li>
+    <li>Put it in your terminal:
+      <pre><code>export IG_TOKEN=<span class="lit">'IGAA...paste-yours...'</span></code></pre>
+    </li>
+  </ol>
+  <div class="cp">
+    <p class="cp__t">Checkpoint 5</p>
+    <p>Ask Instagram who you are:</p>
+    <pre><code>curl -s "https://graph.instagram.com/v25.0/me?fields=user_id,username&amp;access_token=$IG_TOKEN"</code></pre>
+    <p style="margin-top:10px">Expect your own username back, with a <code>user_id</code>.</p>
+    <p class="cp__fail"><b>An <code>OAuthException</code>:</b> the token was copied wrong or has already expired. Generate a new one.<br>
+    <b>Note:</b> the response may contain both <code>id</code> and <code>user_id</code>. The one that matters is <code>user_id</code>. The engine reads the right one for you.</p>
+  </div>
+  <div class="note note--warn">
+    <p class="note__t">60 days</p>
+    <p>Dashboard tokens are long-lived but expire after 60 days, and when they die your automation just stops quietly. Stage 9 covers keeping it alive.</p>
+  </div>
+</section>
+
+<section class="stage">
+  <span class="n">6</span>
+  <div class="stage__head"><h2>Install the engine</h2><span class="mins">5 min &middot; terminal</span></div>
+  <ol class="steps">
+    <li>Set it up (the virtual environment already exists &mdash; this just confirms it):
+      <pre><code>cd ~/Automation/dm-engine
+python3 -m venv .venv
+./.venv/bin/pip install -r requirements.txt</code></pre>
+    </li>
+    <li>Create your settings file:
+      <pre><code>cp .env.example .env</code></pre>
+    </li>
+    <li>Open <code>.env</code> and set two values. Leave <code>META_DRY_RUN=1</code> for now &mdash; that's the safety catch.
+      <pre><code><span class="cmt"># Instagram &gt; API setup &gt; Instagram app secret</span>
+META_APP_SECRET=paste-the-instagram-app-secret
+<span class="cmt"># any string you invent; only needed for webhooks later</span>
+META_VERIFY_TOKEN=pick-anything-you-like
+META_DRY_RUN=1</code></pre>
+    </li>
+    <li>Connect your account. The settings file is read automatically &mdash; nothing to export:
+      <pre><code>./.venv/bin/python cli.py connect "$IG_TOKEN"</code></pre>
+    </li>
+  </ol>
+  <div class="cp">
+    <p class="cp__t">Checkpoint 6</p>
+    <pre><code>./.venv/bin/python cli.py doctor</code></pre>
+    <p style="margin-top:10px">Every line should read <b>ok</b>, including <b>Meta accepts the token</b> with your username.</p>
+    <p class="cp__fail"><b>Any FAIL:</b> the line tells you the fix underneath it. Don't continue past a red line &mdash; nothing downstream will work.</p>
+  </div>
+</section>
+
+<section class="stage">
+  <span class="n">7</span>
+  <div class="stage__head"><h2>Prove the machinery works</h2><span class="mins">2 min</span></div>
+  <p class="stage__lede">Before Instagram is involved at all, confirm the engine itself is sound. This talks to nothing external.</p>
+  <ol class="steps">
+    <li>In a <b>second terminal window</b>, start the server:
+      <pre><code>cd ~/Automation/dm-engine
+./.venv/bin/uvicorn app:app --port 8000</code></pre>
+      <span class="saw">A line ending <code>Uvicorn running on http://127.0.0.1:8000</code>. Leave it running.</span></li>
+    <li>Back in the first window:
+      <pre><code>./.venv/bin/python cli.py selftest</code></pre>
+    </li>
+  </ol>
+  <div class="cp">
+    <p class="cp__t">Checkpoint 7</p>
+    <p>Eight <b>PASS</b> lines, ending with <em>everything local works</em>. This has proved the server runs, signature checking rejects forgeries, keyword matching fires, the link and email ask ship as one message, and a replied email is captured as a lead.</p>
+    <p class="cp__fail"><b><code>a correctly signed webhook is accepted</code> fails:</b> the server started before you edited <code>.env</code>. Stop it (Ctrl-C) and start it again.</p>
+  </div>
+</section>
+
+<section class="stage">
+  <span class="n">8</span>
+  <div class="stage__head"><h2>Go live on your real account</h2><span class="mins">10 min</span></div>
+  <p class="stage__lede">Now the real thing. Still with the safety catch on for the first pass.</p>
+  <ol class="steps">
+    <li>Create your automation. Use a keyword you'd genuinely post:
+      <pre><code>./.venv/bin/python cli.py keyword GUIDE \
+  --reply <span class="lit">"Here you go: yoursite.com/guide"</span> \
+  --ask-email <span class="lit">"Want it by email too? Drop your address."</span> \
+  --thanks <span class="lit">"Sent. Check your inbox."</span></code></pre>
+      <span class="saw">A byte count. Meta caps a message at 1000 bytes and you only get <b>one</b> reply per comment, so the link and the ask travel together.</span></li>
+    <li>Post something on Instagram. Anything &mdash; it just needs to be public and recent.</li>
+    <li>From your <b>second account</b> (or ask a friend), comment <b>GUIDE</b> on it.</li>
+    <li>Dry run first &mdash; this reads your real comments but sends nothing:
+      <pre><code>./.venv/bin/python cli.py poll --once
+./.venv/bin/python cli.py log</code></pre>
+      <span class="saw">A logged <code>private_reply</code> with your text. Nothing was actually sent.</span></li>
+    <li>If that looked right, take the safety catch off. Edit <code>.env</code>, set <code>META_DRY_RUN=0</code>, then:
+      <pre><code>./.venv/bin/python cli.py poll --once</code></pre>
+    </li>
+  </ol>
+  <div class="cp">
+    <p class="cp__t">Checkpoint 8 &mdash; the one that matters</p>
+    <p>Check the second account's Instagram DMs. <b>Look in the Requests folder too</b> &mdash; a first message from an account you don't follow often lands there.</p>
+    <p>Then finish the loop: reply to that DM with an email address, run <code>cli.py poll --once</code> once more, and:</p>
+    <pre><code>./.venv/bin/python cli.py leads</code></pre>
+    <p class="cp__fail">
+      <b>Nothing in the log at all:</b> the comment is older than 7 days, or the keyword didn't match &mdash; matching is on whole words, so <code>GUIDE</code> won't match <code>GUIDES</code>.<br>
+      <b>A <code>FAIL</code> line mentioning permissions:</b> copy the full error. That's the Advanced Access question landing on you, and it's the one thing that would mean filing for App Review.<br>
+      <b>Reply sent but no lead captured:</b> the reply has to come back as a DM within 24 hours. Check <code>cli.py log</code> for <em>outside 24h messaging window</em>.
+    </p>
+  </div>
+</section>
+
+<section class="stage">
+  <span class="n">9</span>
+  <div class="stage__head"><h2>Keep it running</h2><span class="mins">3 min</span></div>
+  <ol class="steps">
+    <li>Install it as a background service. It starts when you log in, restarts if it dies, and checks every 60 seconds:
+      <pre><code>./.venv/bin/python cli.py install</code></pre>
+      <span class="saw">A confirmation with the log file path. <code>cli.py doctor</code> now shows whether it's running. <code>cli.py uninstall</code> stops it.</span></li>
+    <li>If you edit <code>.env</code> later, the service needs a restart: <code>cli.py uninstall</code> then <code>cli.py install</code>.</li>
+    <li><b>Put a monthly reminder in your calendar</b> to run:
+      <pre><code>./.venv/bin/python cli.py refresh</code></pre>
+      <span class="saw">Tokens die at 60 days and the failure is silent &mdash; replies just stop.</span></li>
+  </ol>
+  <div class="wrap">
+    <table>
+      <thead><tr><th>Day to day</th><th>What it tells you</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">cli.py leads</td><td>Every email you've captured</td></tr>
+        <tr><td class="mono">cli.py log</td><td>What went out, and what failed and why</td></tr>
+        <tr><td class="mono">cli.py stats</td><td>Headroom against Meta's 750/hour cap</td></tr>
+        <tr><td class="mono">cli.py doctor</td><td>Token health and config</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="stage stage--opt">
+  <span class="n">+</span>
+  <div class="stage__head"><h2>Optional: make it smarter</h2><span class="mins">5 min each &middot; all off by default</span></div>
+  <p class="stage__lede">Everything above sends a fixed message. These are the upgrades, and each is one flag.</p>
+  <ol class="steps">
+    <li><b>AI replies</b> &mdash; answers what people actually asked instead of dumping a link. Put <code>ANTHROPIC_API_KEY=...</code> in <code>.env</code>, then add a brief to a keyword:
+      <pre><code>./.venv/bin/python cli.py keyword GUIDE \
+  --reply <span class="lit">"Here you go: yoursite.com/guide"</span> \
+  --ai-brief <span class="lit">"We sell handmade candles from Bristol. UK shipping is 3 days, GBP 4.50."</span></code></pre>
+      <span class="saw">The fixed <code>--reply</code> becomes the fallback &mdash; used whenever the model is unavailable or declines. A comment can't talk it into inventing prices or promising refunds; the commenter's words are treated as data, not instructions.</span></li>
+    <li><b>Follow-ups</b> &mdash; one nudge to people who replied but never handed over an email:
+      <pre><code>./.venv/bin/python cli.py keyword GUIDE --reply <span class="lit">"..."</span> --ask-email <span class="lit">"..."</span> \
+  --followup <span class="lit">"Still want that guide? Just send your email."</span> --followup-after 4</code></pre>
+      <span class="saw">Meta only allows a DM within 24 hours of <em>their</em> last message, so someone who never replied at all can't be nudged. Those show as <code>expired</code> in <code>cli.py log</code> with the reason.</span></li>
+    <li><b>Leads into your email tool</b> &mdash; set <code>LEAD_WEBHOOK_URL</code> in <code>.env</code> to a Zapier, Make or n8n catch-hook. Every lead is POSTed there as it lands, with retries. It's saved locally first, so a broken endpoint never loses one.</li>
+  </ol>
+</section>
+
+<section class="stage stage--opt">
+  <span class="n">+</span>
+  <div class="stage__head"><h2>Optional: instant replies via webhooks</h2><span class="mins">20 min &middot; only if you want it</span></div>
+  <p class="stage__lede">Polling costs you up to a minute. If that bothers you, try webhooks &mdash; but only after Stage 8 works. If this stage fails, nothing is lost; you stay on polling.</p>
+  <ol class="steps">
+    <li>Set the app to <b>Live</b> in the dashboard. Look for a mode control near the app name. <b>Going Live is a toggle, not App Review</b> &mdash; people conflate these constantly. Webhooks never fire in Development mode.</li>
+    <li>Get a public HTTPS address for your machine:
+      <pre><code>brew install cloudflared
+cloudflared tunnel --url http://localhost:8000</code></pre>
+      <span class="saw">A <code>https://something.trycloudflare.com</code> URL. It changes every restart.</span></li>
+    <li>In <b>Instagram &rarr; Webhooks</b>, set the <b>Callback URL</b> to <code>https://your-tunnel-url/webhook</code> and the <b>Verify token</b> to your <code>META_VERIFY_TOKEN</code>. Save. Then subscribe to the <b>comments</b> and <b>messages</b> fields.</li>
+    <li>Subscribe the account itself. This step is easy to miss and everything silently fails without it:
+      <pre><code>curl -X POST "https://graph.instagram.com/v25.0/me/subscribed_apps" \
+  -d "subscribed_fields=comments,messages" \
+  -d "access_token=$IG_TOKEN"</code></pre>
+    </li>
+    <li>Comment on a post from your second account and watch the uvicorn window.</li>
+  </ol>
+  <div class="cp">
+    <p class="cp__t">Reading the result</p>
+    <p><b>A comment event arrives:</b> you have instant replies. Stop the poller.</p>
+    <p style="margin-top:8px"><b><code>messages</code> arrives but <code>comments</code> never does:</b> that's the documented Advanced Access gate, real and enforced for you. Keep the poller running &mdash; same outcome, 60 seconds slower.</p>
+    <p style="margin-top:8px"><b>Nothing arrives at all:</b> plumbing, not policy. Check the app is Live, that step 4 actually applied, and that your tunnel URL is current.</p>
+  </div>
+</section>
+
+<section class="block">
+  <h2>When something breaks</h2>
+  <div class="wrap">
+    <table>
+      <thead><tr><th>What you see</th><th>What it means</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr><td>Nothing at all happens</td><td>Comment older than 7 days, or keyword mismatch</td><td>Matching is whole-word. Comment the keyword exactly</td></tr>
+        <tr><td class="mono">outside 24h messaging window</td><td>They messaged you over a day ago</td><td>Working as intended. Meta's rule, not ours</td></tr>
+        <tr><td class="mono">local rate cap 750/hr</td><td>A post went big</td><td>Working as intended. It drains at the cap; nothing is lost</td></tr>
+        <tr><td class="mono">OAuthException</td><td>Token expired or revoked</td><td><code>cli.py refresh</code>, or regenerate in the dashboard</td></tr>
+        <tr><td>Error mentioning access level</td><td>The Advanced Access gate</td><td>Stay on polling. Only file for review if polling fails too</td></tr>
+        <tr><td>DM sent but they never saw it</td><td>Landed in Requests</td><td>Normal for a first contact. Nothing to fix</td></tr>
+        <tr><td>Webhooks 401 every time</td><td>Wrong secret</td><td>A Business app has two. Try the Facebook app secret under Settings &rarr; Basic</td></tr>
+        <tr><td>It worked, then stopped ~2 months later</td><td>Token hit 60 days</td><td><code>cli.py refresh</code>. Set the monthly reminder</td></tr>
+        <tr><td>Changed <code>.env</code>, nothing changed</td><td>The running process read the old file</td><td>Restart it: <code>cli.py uninstall</code> then <code>cli.py install</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</div>
+
+<footer class="shell">
+  Verified September 2026 against Meta's Instagram Platform documentation (Graph API v25.0, Instagram Login path) and first-hand developer reports.<br>
+  Meta reorganises this dashboard often. Where a button name here doesn't match what you see, the surrounding step still describes the right thing to look for.
+</footer>
